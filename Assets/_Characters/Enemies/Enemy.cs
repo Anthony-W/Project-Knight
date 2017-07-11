@@ -22,10 +22,15 @@ namespace RPG.Characters
         [SerializeField] GameObject projectileSocket;
         [SerializeField] Vector3 aimOffset = new Vector3(0, 1f, 0);
 
+        [SerializeField] AnimatorOverrideController animatorOverrideController;
+        [SerializeField] AnimationClip attackAnimation;
+
         bool isAttacking = false;
         float currentHealthPoints;
         AICharacterControl aiCharacterControl = null;
         GameObject player = null;
+        Animator animator;
+        IEnumerator attackCoroutine;
 
         public float healthAsPercentage { get { return currentHealthPoints / maxHealthPoints; } }
 
@@ -40,6 +45,7 @@ namespace RPG.Characters
             player = GameObject.FindGameObjectWithTag("Player");
             aiCharacterControl = GetComponent<AICharacterControl>();
             currentHealthPoints = maxHealthPoints;
+            attackCoroutine = MeleeAttack();
         }
 
         void Update()
@@ -48,13 +54,13 @@ namespace RPG.Characters
             if (distanceToPlayer <= attackRadius && !isAttacking)
             {
                 isAttacking = true;
-                InvokeRepeating("SpawnProjectile", 0f, secondsBetweenShots); // TODO switch to coroutines
+                //InvokeRepeating("SpawnProjectile", 0f, secondsBetweenShots); // TODO switch to coroutines
+                StartCoroutine(attackCoroutine);
             }
-
             if (distanceToPlayer > attackRadius)
             {
                 isAttacking = false;
-                CancelInvoke();
+                StopCoroutine(attackCoroutine);
             }
 
             if (distanceToPlayer <= chaseRadius)
@@ -67,6 +73,12 @@ namespace RPG.Characters
             }
         }
 
+        private void OverrideAnimatorController()
+        {
+            animator.runtimeAnimatorController = animatorOverrideController;
+            animatorOverrideController["DEFAULT ATTACK"] = attackAnimation;
+        }
+
         void SpawnProjectile()
         {
             GameObject newProjectile = Instantiate(projectileToUse, projectileSocket.transform.position, Quaternion.identity);
@@ -77,6 +89,16 @@ namespace RPG.Characters
             Vector3 unitVectorToPlayer = (player.transform.position + aimOffset - projectileSocket.transform.position).normalized;
             float projectileSpeed = projectileComponent.projectileSpeed;
             newProjectile.GetComponent<Rigidbody>().velocity = unitVectorToPlayer * projectileSpeed;
+        }
+
+        IEnumerator MeleeAttack()
+        {
+            while (true)
+            {
+                yield return new WaitForSecondsRealtime(secondsBetweenShots);
+                Player target = player.GetComponent<Player>();
+                target.TakeDamage(10f);
+            }
         }
 
         void OnDrawGizmosSelected()
