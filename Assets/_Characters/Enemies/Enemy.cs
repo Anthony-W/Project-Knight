@@ -45,6 +45,7 @@ namespace RPG.Characters
             player = GameObject.FindGameObjectWithTag("Player");
             aiCharacterControl = GetComponent<AICharacterControl>();
             currentHealthPoints = maxHealthPoints;
+            animator = GetComponent<Animator>();
             attackCoroutine = MeleeAttack();
         }
 
@@ -96,6 +97,7 @@ namespace RPG.Characters
             while (true)
             {
                 yield return new WaitForSecondsRealtime(secondsBetweenShots);
+                animator.SetTrigger("Attack");
                 Player target = player.GetComponent<Player>();
                 target.TakeDamage(10f);
             }
