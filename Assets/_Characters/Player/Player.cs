@@ -43,10 +43,10 @@ namespace RPG.Characters
 
         void Update()
         {
-            if (Input.GetKeyUp(KeyCode.F)) AttempSpecialAbility(1, null);
+            if (Input.GetKeyUp(KeyCode.F)) AttemptSpecialAbility(1, null);
         }
 
-        void AttempSpecialAbility(int index, Enemy enemy)
+        void AttemptSpecialAbility(int index, Enemy enemy)
         {
             //if (cooldown == 0)
             var abilityParams = new AbilityUseParams(enemy, baseDamage);
@@ -91,7 +91,7 @@ namespace RPG.Characters
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                AttempSpecialAbility(0, enemy);
+                AttemptSpecialAbility(0, enemy);
             }
         }
 

@@ -6,12 +6,14 @@ using UnityStandardAssets.Characters.ThirdPerson;
 //TODO: consider rewiring
 using RPG.Core;
 using RPG.Weapons;
+using RPG.CameraUI.Quests;
 
 namespace RPG.Characters
 {
     public class Enemy : MonoBehaviour, IDamageable
     {
 
+        [SerializeField] string name = "DEFAULT_NAME";
         [SerializeField] float maxHealthPoints = 100f;
         [SerializeField] float chaseRadius = 6f;
 
@@ -21,7 +23,7 @@ namespace RPG.Characters
         [SerializeField] GameObject projectileToUse;
         [SerializeField] GameObject projectileSocket;
         [SerializeField] Vector3 aimOffset = new Vector3(0, 1f, 0);
-
+        
         [SerializeField] AnimatorOverrideController animatorOverrideController;
         [SerializeField] AnimationClip attackAnimation;
 
@@ -37,7 +39,10 @@ namespace RPG.Characters
         public void TakeDamage(float damage)
         {
             currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
-            if (currentHealthPoints <= 0) { Destroy(gameObject); }
+            if (currentHealthPoints <= 0) {
+                QuestController.Trigger(name +  " Defeated");
+                Destroy(gameObject);
+            }
         }
 
         void Start()
