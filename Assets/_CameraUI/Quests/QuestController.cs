@@ -6,7 +6,7 @@ namespace RPG.CameraUI.Quests
 {
     public class QuestController : MonoBehaviour
     {
-        [SerializeField] List<Quest> currentQuests;
+        [SerializeField] Quest[] currentQuests;
 
         public delegate void OnQuestTrigger(string trigger);
         public static event OnQuestTrigger onQuestTrigger;
@@ -17,7 +17,6 @@ namespace RPG.CameraUI.Quests
             //currentQuests = new List<Quest>();
             foreach (Quest quest in currentQuests)
             {
-                print(quest);
                 quest.Init();
             }
         }
@@ -25,29 +24,39 @@ namespace RPG.CameraUI.Quests
         // Update is called once per frame
         void Update()
         {
-            foreach (Quest quest in currentQuests)
+            for (int i = 0; i < currentQuests.Length; i++)
             {
-                print(quest.IsCompleted());
-                print(quest.currentTriggers);
-                if (quest.IsCompleted())
+                if (currentQuests[i] && currentQuests[i].IsCompleted())
                 {
-                    FinishQuest(quest, currentQuests.IndexOf(quest));
-                    return; // TODO: FIND BETTER SOLUTION
+                    if (currentQuests[i] && currentQuests[i].IsCompleted())
+                        FinishQuest(i);
                 }
             }
         }
 
-        void StartQuest(Quest quest)
+        void StartQuest(int questIndex)
         {
-            print(quest.dialogueStart);
-            currentQuests.Add(quest);
+            print(currentQuests[questIndex].dialogueStart);
+            currentQuests[questIndex] = null;
         }
 
-        void FinishQuest(Quest quest, int index)
+        void FinishQuest(int questIndex)
         {
-            quest.RemoveFromDelegate();
-            print(quest.dialogueEnd);
-            currentQuests.RemoveAt(index);
+            currentQuests[questIndex].RemoveFromDelegate();
+            print(currentQuests[questIndex].dialogueEnd);
+            currentQuests[questIndex] = null;
+        }
+
+        void UpdateQuestList()
+        {
+            for (int i = 0; i < currentQuests.Length; i++)
+            {
+                if (i <= currentQuests.Length - 2 && !currentQuests[i] && currentQuests[i + 1])
+                {
+                    currentQuests[i] = currentQuests[i + 1];
+                    currentQuests[i + 1] = null;
+                }
+            }
         }
 
         public static void Trigger(string trigger)

@@ -15,7 +15,6 @@ namespace RPG.CamerUI
         {
             player = GameObject.FindGameObjectWithTag("Player");
             rotate = new Vector3(0, 1, 0);
-            transform.Rotate(rotate * 150);
         }
 
         // Update is called once per frame
