@@ -6,7 +6,7 @@ namespace RPG.CameraUI.Quests
 {
     public class QuestController : MonoBehaviour
     {
-        [SerializeField] Quest[] currentQuests;
+        Quest[] currentQuests;
 
         public delegate void OnQuestTrigger(string trigger);
         public static event OnQuestTrigger onQuestTrigger;
@@ -14,11 +14,13 @@ namespace RPG.CameraUI.Quests
         // Use this for initialization
         void Start()
         {
-            //currentQuests = new List<Quest>();
+            currentQuests = new Quest[20];
+            /*
             foreach (Quest quest in currentQuests)
             {
                 quest.Init();
             }
+            */
         }
 
         // Update is called once per frame
@@ -34,10 +36,23 @@ namespace RPG.CameraUI.Quests
             }
         }
 
-        void StartQuest(int questIndex)
+
+        /*
+         * returns true if quest successfully assigned, false if quest controller is full
+         */
+        public bool TryStartQuest(Quest newQuest)
         {
-            print(currentQuests[questIndex].dialogueStart);
-            currentQuests[questIndex] = null;
+            for (int i = 0; i < currentQuests.Length; i++)
+            {
+                if (!currentQuests[i])
+                {
+                    currentQuests[i] = newQuest;
+                    currentQuests[i].Init();
+                    print(currentQuests[i].dialogueStart);
+                    return true;
+                }
+            }
+            return false;
         }
 
         void FinishQuest(int questIndex)

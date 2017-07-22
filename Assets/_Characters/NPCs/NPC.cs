@@ -1,16 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RPG.CameraUI.Quests;
 
-public class NPC : MonoBehaviour {
+public class NPC : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    [SerializeField] float triggerRadius = 5f;
+    [SerializeField] Quest quest;
+
+    bool questAccepted = false;
+
+    // Use this for initialization
+    void Start ()
+    {
+        SphereCollider sphereCollider = gameObject.AddComponent<SphereCollider>();
+        sphereCollider.isTrigger = true;
+        sphereCollider.radius = triggerRadius;
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 11)
+        {
+            AssignQuest(other.GetComponent<QuestController>());
+        }
+    }
+
+    void AssignQuest(QuestController qc)
+    {
+        if (!questAccepted)
+        {
+            if (qc.TryStartQuest(quest))
+                questAccepted = true;
+            else
+                print("You cannot accept any more quests.");
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 255f, 0, .5f);
+        Gizmos.DrawWireSphere(transform.position, triggerRadius);
+    }
 }
