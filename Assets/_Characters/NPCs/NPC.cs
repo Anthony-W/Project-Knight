@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RPG.CameraUI.Quests;
+using Fungus;
 
 public class NPC : MonoBehaviour
 {
 
     [SerializeField] float triggerRadius = 5f;
     [SerializeField] Quest quest;
+    [SerializeField] Flowchart flowchart;
 
     bool questAccepted = false;
 
@@ -25,6 +27,7 @@ public class NPC : MonoBehaviour
         if (other.gameObject.layer == 11)
         {
             AssignQuest(other.GetComponent<QuestController>());
+            flowchart.SendFungusMessage("test");
         }
     }
 

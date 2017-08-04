@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fungus;
 
 namespace RPG.CameraUI.Quests
 {
     public class QuestController : MonoBehaviour
     {
         Quest[] currentQuests;
+
+        [SerializeField] Flowchart flowchart;
 
         public delegate void OnQuestTrigger(string trigger);
         public static event OnQuestTrigger onQuestTrigger;
@@ -48,7 +51,7 @@ namespace RPG.CameraUI.Quests
                 {
                     currentQuests[i] = newQuest;
                     currentQuests[i].Init();
-                    print(currentQuests[i].dialogueStart);
+                    flowchart.SendFungusMessage(newQuest.messageStart);
                     return true;
                 }
             }
@@ -58,7 +61,7 @@ namespace RPG.CameraUI.Quests
         void FinishQuest(int questIndex)
         {
             currentQuests[questIndex].RemoveFromDelegate();
-            print(currentQuests[questIndex].dialogueEnd);
+            flowchart.SendFungusMessage(currentQuests[questIndex].messageEnd);
             currentQuests[questIndex] = null;
         }
 

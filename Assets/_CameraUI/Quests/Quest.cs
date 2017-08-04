@@ -8,8 +8,8 @@ namespace RPG.CameraUI.Quests
     {
         [SerializeField] string trigger = "testTrigger";
         [SerializeField] int numTriggers = 1;
-        public string dialogueStart = "Help us!";
-        public string dialogueEnd = "Thank you!";
+        public string messageStart = "start";
+        public string messageEnd = "end";
 
         public int currentTriggers = 0;
         bool completed = false;
