@@ -43,6 +43,7 @@ namespace RPG.CameraUI
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (RaycastForEnemy(ray)) return;
+                if (RaycastForNPC(ray)) return;
                 if (RaycastForWalkable(ray)) return;
             }
         }
@@ -72,6 +73,22 @@ namespace RPG.CameraUI
             {
                 Cursor.SetCursor(walkCursor, cursorHotspot, CursorMode.Auto);
                 onMouseOverPotentiallyWalkable(hitInfo.point);
+                return true;
+            }
+            return false;
+        }
+
+        bool RaycastForNPC(Ray ray)
+        {
+            RaycastHit hitInfo;
+            Physics.Raycast(ray, out hitInfo, maxRaycastDepth);
+            if (!hitInfo.collider) return false;
+            var gameObjectHit = hitInfo.collider.gameObject;
+            var npcHit = gameObjectHit.GetComponent<NPC>();
+            if (npcHit)
+            {
+                Cursor.SetCursor(targetCursor, cursorHotspot, CursorMode.Auto);
+                if (Input.GetMouseButtonDown(0)) npcHit.StartInteraction();
                 return true;
             }
             return false;
